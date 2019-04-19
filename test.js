@@ -18,15 +18,16 @@ ipfs.on('ready', async () => {
   // }
 
 
-  const db = await orbitdb.keyvalue('first-database', options)
-
+  const db = await orbitdb.eventlog('first-database')
   console.log(db.address.toString())
 
-
-})
-io.on('connection', (socket) => {
-  socket.on('chat message', (msg) => {
-    queue.push(msg)  
-    console.log(queue.length)
+  io.on('connection', (socket) => {
+    socket.on('chat message', (msg) => {
+      queue.push(msg)
+      db.add(msg)  
+      console.log(queue.length)
+    })
   })
+
+
 })
