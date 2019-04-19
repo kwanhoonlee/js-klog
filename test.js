@@ -22,10 +22,11 @@ ipfs.on('ready', async () => {
 
   console.log(db.address.toString())
 
-  io.on('connection', (socket) => {
-    socket.on('chat message', (msg) => {
-      queue.push(msg)  
-      console.log(queue.length)
-    })
+
+})
+io.on('connection', (socket) => {
+  socket.on('chat message', (msg) => {
+    queue.push(msg)  
+    console.log(queue.length)
   })
 })
