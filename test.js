@@ -1,6 +1,6 @@
 const IPFS = require('ipfs')
 const OrbitDB = require('orbit-db')
-const io = require('socket.io')(80);
+const io = require('socket.io')(3999);
 const ipfsOptions = {
   EXPERIMENTAL: {
     pubsub:true
@@ -22,9 +22,10 @@ ipfs.on('ready', async () => {
   console.log(db.address.toString())
 
   io.on('connection', (socket) => {
-    socket.on('chat message', (msg) => {
-      queue.push(msg)
-      db.add(msg)  
+    socket.on('chat message', async (msg) => {
+      await queue.push(msg)
+      await db.add(msg)
+
       console.log(queue.length)
     })
   })
