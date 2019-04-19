@@ -1,6 +1,7 @@
-var exec = require('child_process').exec, child;
+var exec = require('child_process').exec,child;
 
 function encode(fname){
+
     cmd = concatFlag(fname)
 
     child = exec(cmd, function(err, stdOut, stdErr){
@@ -11,6 +12,7 @@ function encode(fname){
 }
 
 function concatFlag(fname){
+
     const encoder = "encoder"
     const options = {
         K : "8",
@@ -30,4 +32,5 @@ function concatFlag(fname){
     return cmd;
 }
 
+encode("add.js")
 module.exports = encode
