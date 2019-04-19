@@ -12,4 +12,4 @@ function decode(fname){
     })
 }
 
-decode("add.js")
+module.exports = decode
