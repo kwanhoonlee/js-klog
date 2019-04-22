@@ -1,6 +1,5 @@
 var exec = require('child_process').exec,child;
 
-
 function decode(fname){
     const decoder = "decoder"
     cmd = decoder.concat(" ", fname)
