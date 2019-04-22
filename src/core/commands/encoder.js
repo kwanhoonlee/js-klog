@@ -30,4 +30,4 @@ function concatFlag(fname){
     return cmd;
 }
 
-module.exports = encode
+module.exports.encode = encode
