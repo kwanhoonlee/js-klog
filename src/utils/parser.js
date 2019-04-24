@@ -1,5 +1,4 @@
 
-
 function splitBlockName(fname){
     var b = fname.split("_")
     return b
