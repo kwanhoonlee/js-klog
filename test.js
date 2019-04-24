@@ -29,6 +29,6 @@ ipfs.on('ready', async () => {
       console.log(queue.length)
     })
   })
-
-
 })
+
+const db = await orbitdb.eventlog('first-database')

@@ -9,7 +9,6 @@ config = {
     protocol:"http",
 }
 
-
 const ipfs = ipfsClient(config.host, config.port, {protocol:config.protocol})
 
 async function add(fname){
@@ -30,11 +29,13 @@ async function add(fname){
     })
 }
 
+// TODO: except meta and datablocks
 async function addBlocks(){
     var files = await utils.files.getBlockList()
     var codingPath = utils.path.coding
     
     for(var i in files){
+        console.log(isParityBlock(files[i]))
         await add(codingPath.concat(files[i]))
     }
 }
@@ -55,4 +56,11 @@ module.exports = {
     // addBlocks : addBlocks,
     addOriginal: addOriginal,
     commandAdd : commandAdd
+}
+
+function isParityBlock(fname){
+    var pname = '_m[0-9].'
+    var isParity = fname.indexOf(pname)!==-1;
+
+    return isParity
 }
