@@ -35,8 +35,9 @@ async function addBlocks(){
     var codingPath = utils.path.coding
     
     for(var i in files){
-        console.log(isParityBlock(files[i]))
-        await add(codingPath.concat(files[i]))
+        if (isParityBlock(files[i])){
+            await add(codingPath.concat(files[i]))        
+        }
     }
 }
 
@@ -50,17 +51,18 @@ async function commandAdd(fname){
     addBlocks()
 }
 
-commandAdd('add.js')
+function isParityBlock(fname){
+    var pattern = /_m[0-9]./
+    var isParity = pattern.test(fname)
+
+    return isParity
+}
+
+// commandAdd('add.js')
+
 module.exports = {
     add : add,
     // addBlocks : addBlocks,
     addOriginal: addOriginal,
     commandAdd : commandAdd
-}
-
-function isParityBlock(fname){
-    var pname = '_m[0-9].'
-    var isParity = fname.indexOf(pname)!==-1;
-
-    return isParity
 }
