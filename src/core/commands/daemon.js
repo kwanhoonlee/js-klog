@@ -35,7 +35,9 @@ ipfs.on('ready', async () => {
         directory:dir
     }
     
-    const meta = await orbitdb.keyvalue('meta', dbOptions)
+    // const meta = await orbitdb.keyvalue('meta', dbOptions)
+    const meta = await orbitdb.open('/orbitdb/zdpuAsLekbGRGT6Pa4xK9TGcbj6XYektNPu43u2zJfnmN33Sk/meta')
+    await meta.load()
     const job = await orbitdb.docs('job', dbOptions)
     const eventlog = await orbitdb.eventlog('eventlog', dbOptions)
 
