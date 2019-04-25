@@ -20,8 +20,6 @@ const ipfs = new IPFS(ipfsOptions)
 
 ipfs.on('errer', (e) => console.error(e))
 ipfs.on('ready', async () => {
-    var queue = []
-    console.log("daemon")
     var dir = process.env['HOME'].concat('/.k-log/datastore/orbitdb')
     const orbitdbOptions = {
         directory:dir
@@ -35,11 +33,13 @@ ipfs.on('ready', async () => {
         directory:dir
     }
     
-    // const meta = await orbitdb.keyvalue('meta', dbOptions)
-    const meta = await orbitdb.open('/orbitdb/zdpuAsLekbGRGT6Pa4xK9TGcbj6XYektNPu43u2zJfnmN33Sk/meta')
-    await meta.load()
+    const meta = await orbitdb.keyvalue('meta', dbOptions)
     const job = await orbitdb.docs('job', dbOptions)
     const eventlog = await orbitdb.eventlog('eventlog', dbOptions)
+
+    await meta.load()
+    await job.load()
+    await eventlog.load()
 
     console.log(meta.address.toString())
     console.log(job.address.toString())
@@ -60,13 +60,25 @@ ipfs.on('ready', async () => {
         console.log(eventlog.iterator({ limit: -1 }).collect().map(e => e.payload.value))
     })
 
-    io.on('connection', (socket) => {
-        socket.on('message', async (msg) => {
-            await queue.push(msg)
-            var newMsg = await queue.shift()
-            meta.put(newMsg.Roothash, newMsg)
+    let mQueue = []
+    let eQueue = []
+    let jQueue = []
 
-            // console.log(newMsg)
+    io.on('connection', (socket) => {
+        socket.on('meta', async (msg) => {
+            await mQueue.push(msg)
+            var mMsg = await mQueue.shift()
+            meta.put(mMsg.Roothash, mMsg)
+        })
+        socket.on('log', async (msg) => {
+            await eQueue.push(msg)
+            var eMsg = await eQueue.shift()
+            eventlog.add(eMsg)
+        })
+        socket.on('job', async (msg) => {
+            await jQueue.push(msg)
+            var jMsg = await jQueue.shift()
+            job.put({_id:jMsg.peerId, doc:jMsg})
         })
     })
 })

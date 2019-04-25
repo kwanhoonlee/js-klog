@@ -107,8 +107,11 @@ async function setMetaInfo(fname, rh, pbl){
     mi['Roothash'] = rh
     mi['ParityBlockList'] = pbl
     console.log(mi)
+    // mi instanceof metaInfo
+    console.log(mi.constructor)
     
-    sender.sendMessages(mi)
+    sender.sendMessages('meta', mi.toJSON())
+    sender.sendMessages('log', ['helloworld'])
     return mi
 }
 
