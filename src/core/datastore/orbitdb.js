@@ -1,3 +1,4 @@
+
 var DB = class{
     constructor(type, name, address, host, webSocket){
         this.type = type
@@ -8,7 +9,7 @@ var DB = class{
     }
 }
 
-// var meta = new DB('keyvalue', 'meta', 'address', 'localhost', 'websocket' )
+// var meta = new DreqB('keyvalue', 'meta', 'address', 'localhost', 'websocket' )
 // console.log(meta)
 
 module.exports = {

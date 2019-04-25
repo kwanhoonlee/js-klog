@@ -1,6 +1,7 @@
 const ipfsClient = require('ipfs-http-client')
 const utils = require('../../utils/')
 const encoder = require('./encoder')
+const sender = require('./messenger')
 const Meta = require('../datastore/meta')
 const fs = require('fs')
 
@@ -107,6 +108,7 @@ async function setMetaInfo(fname, rh, pbl){
     mi['ParityBlockList'] = pbl
     console.log(mi)
     
+    sender.sendMessages(mi)
     return mi
 }
 

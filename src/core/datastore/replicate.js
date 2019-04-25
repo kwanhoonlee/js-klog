@@ -29,9 +29,10 @@ ipfs.on('ready', async() => {
     console.log(hash)
     const result = db.iterator({ limit: -1 }).collect()
     console.log(JSON.stringify(result, null, 2))
+    const hash2 = await db.add('helloworld!2')
 
-    const value = await db.get('hello')
-    console.log(value)
+    // const value = await db.get('hello')
+    // console.log(value)
     // const hash = db.get('zdpuAvWVNGwbkmk3C77mSrFPSWw4b23roFnzmXPk6WH3zS7FJ')
     // console.log(hash)
     // const db = await orbitdb.open('/orbitdb/zdpuAwcRbFyvTFZzCurABByCXodUjBtYDgDeF5vaGPeeTsQM5/test')
