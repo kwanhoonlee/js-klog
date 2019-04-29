@@ -23,9 +23,9 @@ ipfs.on('ready', async () => {
     var dir = process.env['HOME'].concat('/.k-log/datastore/orbitdb')
     const orbitdbOptions = {
         directory:dir
-    }
-
-    const orbitdb = await OrbitDB.createInstance(ipfs, orbitdbOptions)
+    } 
+    const orbitdb = new OrbitDB(ipfs)
+    // const orbitdb = await OrbitDB.createInstance(ipfs, orbitdbOptions)
     const dbOptions = {
         accessController:{
             write:['*']
@@ -41,6 +41,7 @@ ipfs.on('ready', async () => {
     await job.load()
     await eventlog.load()
 
+    // console.log(meta.address)
     console.log(meta.address.toString())
     console.log(job.address.toString())
     console.log(eventlog.address.toString())
@@ -57,7 +58,7 @@ ipfs.on('ready', async () => {
 
     eventlog.events.on('replicated', (address) => {
         console.log("Log has been replicatied")
-        console.log(eventlog.iterator({ limit: -1 }).collect().map(e => e.payload.value))
+        console.log(eventlog.iterator({ limit: -1 }).collect())
     })
 
     let mQueue = []
@@ -65,20 +66,26 @@ ipfs.on('ready', async () => {
     let jQueue = []
 
     io.on('connection', (socket) => {
-        socket.on('meta', async (msg) => {
-            await mQueue.push(msg)
-            var mMsg = await mQueue.shift()
-            meta.put(mMsg.Roothash, mMsg)
-        })
-        socket.on('log', async (msg) => {
-            await eQueue.push(msg)
-            var eMsg = await eQueue.shift()
-            eventlog.add(eMsg)
-        })
-        socket.on('job', async (msg) => {
-            await jQueue.push(msg)
-            var jMsg = await jQueue.shift()
-            job.put({_id:jMsg.peerId, doc:jMsg})
-        })
+        socket
+            // .on('meta', async (msg) => {
+            //     console.log(msg)
+            //     await mQueue.push(msg)
+            //     var mMsg = await mQueue.shift()
+            //     await meta.put(mMsg.Roothash, mMsg)
+            // })
+
+            .on('log', async (msg) => {
+                console.log(msg)
+                await eQueue.push(msg)
+                var eMsg = await mQueue.shift()
+                var hash = await eventlog.add(eMsg)
+                console.log(hash)
+            })
+
+        // socket.on('job', async (msg) => {
+        //     await jQueue.push(msg)
+        //     var jMsg = await jQueue.shift()
+        //     await job.put({_id:jMsg.peerId, doc:jMsg})
+        // })
     })
 })

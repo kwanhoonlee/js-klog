@@ -110,12 +110,12 @@ async function setMetaInfo(fname, rh, pbl){
     // mi instanceof metaInfo
     console.log(mi.constructor)
     
-    sender.sendMessages('meta', mi.toJSON())
-    sender.sendMessages('log', ['helloworld'])
+    // sender.sendMessages('meta', mi.toJSON())
+    sender.sendMessages('log', 'kwanhoon!we')
     return mi
 }
 
-commandAdd('add.js')
+// commandAdd('add.js')
 
 module.exports = {
     add : add,

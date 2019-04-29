@@ -1,4 +1,5 @@
 var socket = require('socket.io-client')('http://localhost:3999')
+
 function sendMessages(type, message){
     console.log(type)
     switch (type) {
@@ -6,10 +7,14 @@ function sendMessages(type, message){
         case 'meta':
             socket.emit(type, message)
             break
-        case 'log' :
-            message.forEach(function(msg){
-                socket.emit(type, msg)
-            })
+
+        case 'log':
+            socket.emit(type, message)
+        
+            // message.forEach(function(msg){
+            //     console.log(msg)
+            //     socket.emit(type, msg)
+            // })
             break
         case 'job' :
             socket.emit(type, message)
