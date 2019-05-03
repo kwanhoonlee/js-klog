@@ -1,4 +1,7 @@
 var exec = require('child_process').exec,child;
+var spawn = require('child_process').spawn,
+    cluster = spawn('ipfs-cluster-service', ['init', '-s'])
+
 
 function mkdir(){
     cmd = 'sh ../../bin/create.sh'
@@ -9,3 +12,19 @@ function mkdir(){
         }
     })
 }
+
+function ipfsClusterInit(cKey){
+    cluster.stdout.on('data', function(data){
+        cluster.stdin.write(cKey)
+        cluster.stdin.end()
+    })
+
+}
+
+// ipfsClusterInit('eeaae2efbd05ae7863525be4da7046444a178b5ff17fb123828cc93dbaec08bd')
+
+module.exports = {
+    ipfsClusterInit:ipfsClusterInit
+}
+
+

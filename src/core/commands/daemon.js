@@ -18,14 +18,15 @@ const ipfsOptions = {
 }
 const ipfs = new IPFS(ipfsOptions)
 
-ipfs.on('errer', (e) => console.error(e))
+// ipfs.on('errer', (e) => console.error(e))
 ipfs.on('ready', async () => {
     var dir = process.env['HOME'].concat('/.k-log/datastore/orbitdb')
     const orbitdbOptions = {
         directory:dir
     } 
-    const orbitdb = new OrbitDB(ipfs)
-    // const orbitdb = await OrbitDB.createInstance(ipfs, orbitdbOptions)
+
+    // const orbitdb = new OrbitDB(ipfs)
+    const orbitdb = await OrbitDB.createInstance(ipfs, orbitdbOptions)
     const dbOptions = {
         accessController:{
             write:['*']
@@ -67,20 +68,20 @@ ipfs.on('ready', async () => {
 
     io.on('connection', (socket) => {
         socket
-            // .on('meta', async (msg) => {
-            //     console.log(msg)
-            //     await mQueue.push(msg)
-            //     var mMsg = await mQueue.shift()
-            //     await meta.put(mMsg.Roothash, mMsg)
-            // })
-
-            .on('log', async (msg) => {
+            .on('meta', async (msg) => {
                 console.log(msg)
-                await eQueue.push(msg)
-                var eMsg = await mQueue.shift()
-                var hash = await eventlog.add(eMsg)
-                console.log(hash)
+                await mQueue.push(msg)
+                var mMsg = await mQueue.shift()
+                await meta.put(mMsg.Roothash, mMsg)
             })
+
+            // .on('log', async (msg) => {
+            //     console.log(msg)
+            //     await eQueue.push(msg)
+            //     var eMsg = await mQueue.shift()
+            //     var hash = await eventlog.add(eMsg)
+            //     console.log(hash)
+            // })
 
         // socket.on('job', async (msg) => {
         //     await jQueue.push(msg)
@@ -88,4 +89,5 @@ ipfs.on('ready', async () => {
         //     await job.put({_id:jMsg.peerId, doc:jMsg})
         // })
     })
+
 })

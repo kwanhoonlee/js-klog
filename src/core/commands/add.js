@@ -4,6 +4,7 @@ const encoder = require('./encoder')
 const sender = require('./messenger')
 const Meta = require('../datastore/meta')
 const fs = require('fs')
+const cluster_test = require('../../../cluster-test')
 
 config = {
     host:"localhost",
@@ -62,7 +63,8 @@ async function commandAdd(fname){
     var rh = await addOriginal(fname)
     var pbl = await addBlocks()
     let mi = await setMetaInfo(fname, rh, pbl)
-
+    await cluster_test.getPeerList(pbl)
+    // console.log(pbl)
     // console.log(mi.toJSON())
     return rh, pbl
 }
@@ -96,6 +98,15 @@ function getErasureCodingSchema(fname){
     return es
 }
 
+async function getDataBlockList(cid){
+    let middle = []
+    await ipfs.ls(h[0].path, function (err, files) {
+        files.forEach((file) => {
+            middle.push(file)
+        })
+    })
+}
+
 async function setMetaInfo(fname, rh, pbl){
     var es = await getErasureCodingSchema(fname)
     var mi = await new Meta.mi()
@@ -106,16 +117,16 @@ async function setMetaInfo(fname, rh, pbl){
 
     mi['Roothash'] = rh
     mi['ParityBlockList'] = pbl
-    console.log(mi)
+    // console.log(mi)
     // mi instanceof metaInfo
-    console.log(mi.constructor)
+    // console.log(mi.constructor)
     
-    // sender.sendMessages('meta', mi.toJSON())
-    sender.sendMessages('log', 'kwanhoon!we')
+    sender.sendMessages('meta', mi.toJSON())
+    // sender.sendMessages('log', 'kwanhoon!we')
     return mi
 }
 
-// commandAdd('add.js')
+commandAdd('add.js')
 
 module.exports = {
     add : add,
