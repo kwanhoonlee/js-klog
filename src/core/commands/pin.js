@@ -18,12 +18,14 @@ async function pin(){
 }
 
 async function allocations(peerId, cid){
-    var m = setAllocationMessage(peerId, cid)
-    
-    await ipfsCluster.pin.add(cid, {
-        "replication":1,
-        "allocations":peerId
-    })
+    for (var i in cid){
+        var m = setAllocationMessage(peerId, cid[i])
+        // console.log(m)
+        await ipfsCluster.pin.add(cid[i], {
+            "replication":1,
+            "allocations":peerId
+        })
+    }
     // TODO: add recordEventlog()
 }
 
@@ -56,5 +58,11 @@ async function setPinnedMessage(peerId, cid){
 }
 
 
-allocations('QmdxgDCehPNnd9AYkHp93KcwTjJ8wkRxSf6mS1HrrXp2vX', 'QmT4xRTR7LCXHeJJ87npTeRmiwy5ifZpWinW13Gtab2aZ9')
-setPinnedMessage('QmdxgDCehPNnd9AYkHp93KcwTjJ8wkRxSf6mS1HrrXp2vX', 'QmT4xRTR7LCXHeJJ87npTeRmiwy5ifZpWinW13Gtab2aZ9')
+// allocations('QmdxgDCehPNnd9AYkHp93KcwTjJ8wkRxSf6mS1HrrXp2vX', ['QmYUqHFLLHpTRfRaZAjKbEDfjrw6SCyQuTrHmBcKt51VaK','QmXRSZ5PuHSJH2auQFy8enb7aWcRVZH9oZds3DkpndjGMw', 'QmSdrTgESwrwHbgiym6y2GByxuUWxkPmsdTc8AX3Zc7VoE', 'QmRyoj6bziCtFoB17hU4ZpnoWNVfHqs6WkHYnsAKenpWQ7'])
+
+
+// setPinnedMessage('QmdxgDCehPNnd9AYkHp93KcwTjJ8wkRxSf6mS1HrrXp2vX', 'QmT4xRTR7LCXHeJJ87npTeRmiwy5ifZpWinW13Gtab2aZ9')
+
+module.exports = {
+    allocations : allocations
+}
