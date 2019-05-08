@@ -1,26 +1,9 @@
-var socket = require('socket.io-client')('http://localhost:3999')
+var MessageQueue = require('svmq')
+var queue = new MessageQueue(31337)
 
-function sendMessages(type, message){
-    console.log(type)
-    switch (type) {
-        
-        case 'meta':
-            socket.emit(type, message)
-            break
-
-        case 'log':
-            socket.emit(type, message)
-        
-            // message.forEach(function(msg){
-            //     console.log(msg)
-            //     socket.emit(type, msg)
-            // })
-            break
-        case 'job' :
-            socket.emit(type, message)
-            break
-    }    
-    socket.disconnect()
+async function sendMessages(type, data){
+    var d = JSON.stringify({type:type, data:data})
+    await queue.push(d)
 }
 
 module.exports = {

@@ -29,7 +29,8 @@
     "mqemitter": "^2.2.0",
     "orbit-db": "^0.20.0-rc.4",
     "socket.io": "^2.2.0",
-    "socket.io-client": "^2.2.0"
+    "socket.io-client": "^2.2.0",
+    "svmq": "^1.0.6"
   },
   "bin": {
     "k-log": "src/cmd/k-log.js"

@@ -43,75 +43,57 @@ ipfs1.on('ready', async () => {
         directory:dir
     }
 
-    var meta = await orbitdb.keyvalue('meta', dbOptions)
-    var job = await orbitdb.docs('job', dbOptions)
     var eventlog = await orbitdb.eventlog('eventlog', dbOptions)
 
-    await meta.load()
-    await job.load()
+
     await eventlog.load()
 
     // console.log(meta.address)
-    console.log(meta.address.toString())
-    console.log(job.address.toString())
+
     console.log(eventlog.address.toString())
-
-    meta.events.on('replicated', (address) => {
-        console.log("Meta has been replicated")
-        // console.log(meta.iterator({ limit: -1 }).collect())
-    })
-
-    job.events.on('replicated', (address) => {
-        console.log("Job has been replicatied")
-        // console.log(job.iterator({ limit: -1 }).collect())
-    })
 
     eventlog.events.on('replicated', (address) => {
         console.log("Log has been replicatied")
         console.log(eventlog.iterator({ limit: -1 }).collect())
     })
-
-    let mQueue = []
+    
     let eQueue = []
-    let jQueue = []
+
+    const queryLoop = async function(db, content) {
+        var hash = await db.add(content)
+        console.log(hash)
+        setImmediate(() => queryLoop(db))
+    }
+    
     var a = await ipfsC.ls('QmQg1kiYJ33yAfiLWmo3yaGSM6NB4xSfquAdr5ygLqTKXE', async function(err, result){
         middle = []
         leaf = []
         for (var i in result){
             await middle.push(result[i].hash)
-            ipfsC.ls(result[i].hash, async function(err, hash){
+            await ipfsC.ls(result[i].hash, async function(err, hash){
+                
                 for (var j in hash){
                     await leaf.push(hash[j].hash)
                     await pin.allocations('QmdxgDCehPNnd9AYkHp93KcwTjJ8wkRxSf6mS1HrrXp2vX', [hash[j].hash])
-                    await eventlog.add('/pinned/QmdxgDCehPNnd9AYkHp93KcwTjJ8wkRxSf6mS1HrrXp2vX' + hash[j].hash)
+                    
+                    // const log = await eventlog.add('/pinned/QmdxgDCehPNnd9AYkHp93KcwTjJ8wkRxSf6mS1HrrXp2vX' + hash[j].hash)
+                    await queryLoop(eventlog, '/pinned/QmdxgDCehPNnd9AYkHp93KcwTjJ8wkRxSf6mS1HrrXp2vX' + hash[j].hash)
+                    // console.log(log)
+                    
+                    // const all = await eventlog.iterator({ limit: -1 })
+                    //     .collect()
+                    //     .map((e) => e.payload.value)
+
                 }
                 
             })
         }
         console.log(await leaf.length)
     })
-    // kE.on('event', (event) =>  {
-    //     console.log(event, 'event')
-    // })
-    // makeEvent()
-    // var a = function(){
-    //     console.log('hello world')
-    // }
-    // io.on('connection', (socket) => {
-    //     socket
-    //         .on('meta', async (msg) => {
-    //             console.log(msg)
-    //             await mQueue.push(msg)
-    //             var mMsg = await mQueue.shift()
-    //             await meta.put(mMsg.Roothash, mMsg)
-    //         })
-    // })
-})
-
-async function test(){
     
-      
-}
-test()
+})
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
-const ipfs = new IPFS(ipfsOptions)
+  

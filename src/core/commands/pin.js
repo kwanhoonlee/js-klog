@@ -1,8 +1,8 @@
 var ipfsClusterAPI = require('ipfs-cluster-api')
-
 var ipfsCluster = ipfsClusterAPI('localhost', 9094, {protocol: 'http'})
+var sender = require('./messenger')
 
-async function pin(){
+async function pin(cid){
     pl = []
     await ipfsCluster.peers.ls({},function(err, peerList){
         if (err){
@@ -10,23 +10,25 @@ async function pin(){
         } else {
             peerList.forEach(function(e){
                 pl.push(e.id)
+                if (e.id == 'QmZrYJxrno69SXnwPRGH5oLZcufvPqkuJe1ayedFSX7JNP'){
+                    allocations(e.id, cid)
+                }
             })
-            console.log(pl)
+            // console.log(pl)
         }
-        
     })
 }
 
 async function allocations(peerId, cid){
     for (var i in cid){
         var m = setAllocationMessage(peerId, cid[i])
-        // console.log(m)
+
         await ipfsCluster.pin.add(cid[i], {
             "replication":1,
             "allocations":peerId
         })
+        await sender.sendMessages('eventlog', m)
     }
-    // TODO: add recordEventlog()
 }
 
 function setAllocationMessage(peerId, cid){
@@ -38,7 +40,7 @@ function setAllocationMessage(peerId, cid){
 
 // TODO: change this part to recordEventlog
 async function setPinnedMessage(peerId, cid){
-    var s = await ipfsCluster.pin.ls(cid, function(err, r){
+    await ipfsCluster.pin.ls(cid, function(err, r){
         if (err){
             var prefix = '/error/'
             var message = prefix.concat(peerId, '/', cid)
@@ -58,11 +60,15 @@ async function setPinnedMessage(peerId, cid){
 }
 
 
-// allocations('QmdxgDCehPNnd9AYkHp93KcwTjJ8wkRxSf6mS1HrrXp2vX', ['QmYUqHFLLHpTRfRaZAjKbEDfjrw6SCyQuTrHmBcKt51VaK','QmXRSZ5PuHSJH2auQFy8enb7aWcRVZH9oZds3DkpndjGMw', 'QmSdrTgESwrwHbgiym6y2GByxuUWxkPmsdTc8AX3Zc7VoE', 'QmRyoj6bziCtFoB17hU4ZpnoWNVfHqs6WkHYnsAKenpWQ7'])
+// allocations('QmZrYJxrno69SXnwPRGH5oLZcufvPqkuJe1ayedFSX7JNP', ['QmYUqHFLLHpTRfRaZAjKbEDfjrw6SCyQuTrHmBcKt51VaK','QmXRSZ5PuHSJH2auQFy8enb7aWcRVZH9oZds3DkpndjGMw', 'QmSdrTgESwrwHbgiym6y2GByxuUWxkPmsdTc8AX3Zc7VoE', 'QmRyoj6bziCtFoB17hU4ZpnoWNVfHqs6WkHYnsAKenpWQ7'])
 
-
-// setPinnedMessage('QmdxgDCehPNnd9AYkHp93KcwTjJ8wkRxSf6mS1HrrXp2vX', 'QmT4xRTR7LCXHeJJ87npTeRmiwy5ifZpWinW13Gtab2aZ9')
+// for (var i=0; i<100; i++){
+//     setPinnedMessage('QmZrYJxrno69SXnwPRGH5oLZcufvPqkuJe1ayedFSX7JNP', 'QmT4xRTR7LCXHeJJ87npTeRmiwy5ifZpWinW13Gtab2aZ9')
+// }
 
 module.exports = {
-    allocations : allocations
+    pin:pin,
+    allocations : allocations,
+    setPinnedMessage : setPinnedMessage
+    
 }

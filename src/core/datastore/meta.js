@@ -6,14 +6,14 @@ let m = new test.DB('keyvalue', 'meta', '', '6002', '6003')
 
 var metaInfo = class{  
 
-    constructor(Fname, Fsize, K, M, W, P, B, CodingTechnique, D1, D2, Roothash, DataBlockList, ParityBlockList){
-        this.Fname = Fname
-        this.Fsize = Fsize
+    constructor(FileName, FileSize, K, M, WordSize, PacketSize, BufferSize, CodingTechnique, D1, D2, Roothash, DataBlockList, ParityBlockList){
+        this.FileName = FileName
+        this.FileSize = FileSize
         this.K = K
         this.M = M
-        this.W = W
-        this.P = P
-        this.B = B
+        this.WordSize = WordSize
+        this.PacketSize = PacketSize
+        this.BufferSize = BufferSize
         this.CodingTechnique = CodingTechnique
         this.D1 = D1
         this.D2 = D2
@@ -22,9 +22,9 @@ var metaInfo = class{
         this.ParityBlockList = ParityBlockList
     }  
     toJSON(){
-        let {Fname, Fsize, K, M, W, P, B, CodingTechnique, D1, D2, Roothash, DataBlockList, ParityBlockList} = this
+        let {FileName, FileSize, K, M, WordSize, PacketSize, BufferSize, CodingTechnique, D1, D2, Roothash, DataBlockList, ParityBlockList} = this
 
-        return {Fname, Fsize, K, M, W, P, B, CodingTechnique, D1, D2, Roothash, DataBlockList, ParityBlockList}
+        return {FileName, FileSize, K, M, WordSize, PacketSize, BufferSize, CodingTechnique, D1, D2, Roothash, DataBlockList, ParityBlockList}
     }
 }
 

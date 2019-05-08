@@ -20,7 +20,7 @@ function ipfsClusterInit(cKey){
     })
 }
 
-// ipfsClusterInit('eeaae2efbd05ae7863525be4da7046444a178b5ff17fb123828cc93dbaec08bd')
+ipfsClusterInit('eeaae2efbd05ae7863525be4da7046444a178b5ff17fb123828cc93dbaec08bd')
 
 module.exports = {
     ipfsClusterInit:ipfsClusterInit
