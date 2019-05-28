@@ -10,7 +10,7 @@ async function pin(cid){
         } else {
             peerList.forEach(function(e){
                 pl.push(e.id)
-                if (e.id == 'QmZrYJxrno69SXnwPRGH5oLZcufvPqkuJe1ayedFSX7JNP'){
+                if (e.id == 'QmaRixmzbuZAShb6acL2N6gvRLD4GcrSzuvYYKHRWZ4Dsi'){
                     allocations(e.id, cid)
                 }
             })
@@ -27,7 +27,7 @@ async function allocations(peerId, cid){
             "replication":1,
             "allocations":peerId
         })
-        await sender.sendMessages('eventlog', m)
+        // await sender.sendMessages('eventlog', m)
     }
 }
 

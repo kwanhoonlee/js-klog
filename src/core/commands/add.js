@@ -15,12 +15,15 @@ config = {
 
 const ipfs = ipfsClient(config.host, config.port, {protocol:config.protocol})
 
-async function add(fname){
+async function add(fname, option){
     var f = fs.readFileSync(fname)
-    let h = await ipfs.add(f)
 
-    // console.log(h[0].hash)
-
+    let h 
+    if (typeof option === 'undefined')
+        h = await ipfs.add(f)
+    else 
+        h = await ipfs.add(f, {chunker:"klog-".concat(String(f.length))})
+    
     return new Promise(function(resolve, reject){
         const cid = h[0].hash
 
@@ -33,7 +36,7 @@ async function add(fname){
     })
 }
 
-async function addBlocks(){
+async function addParityBlocks(){
     var files = await utils.files.getBlockList()
     var codingPath = utils.path.coding
     var hashList = []
@@ -52,7 +55,7 @@ async function addBlocks(){
 async function addOriginal(fname){
     var roothash
 
-    await add(fname).then(function(resolvedData){
+    await add(fname, true).then(function(resolvedData){
         roothash = resolvedData
     })
 
@@ -60,12 +63,20 @@ async function addOriginal(fname){
 }
 
 async function commandAdd(fname){
-    encoder.encode(fname)
-    var rh = await addOriginal(fname)
-    var pbl = await addBlocks()
-    let mi = await setMetaInfo(fname, rh, pbl)
-    await pinning.pin(pbl)
+    await encoder.encode(fname)
 
+    var rh = await addOriginal(fname)
+    var dbl = await getDataBlockList(rh)
+    var pbl = await addParityBlocks()
+    let mi = await setMetaInfo(fname, rh, dbl, pbl)
+    // for (var i=0; i < dbl.length; i++){
+    //     await pinning.pin(dbl[i])
+    // }
+    // await pinning.pin(pbl)
+    // console.log(pbl)
+    // console.log(mi)
+    // console.log(es)
+    console.log(mi)
     return rh, pbl
 }
 
@@ -76,6 +87,7 @@ function isParityBlock(fname){
     return isParity
 }
 
+// TODO: add exception for getting extension
 function getErasureCodingSchema(fname){
     var parsed = utils.parser.splitExtension(fname)
     parsed.pop()
@@ -98,16 +110,47 @@ function getErasureCodingSchema(fname){
     return es
 }
 
+async function getDataBlockList(cid){
+    var mh = await ipfs.ls(cid)
+    var mhList = []
+
+    if (mh.length != 0){    
+        mh.forEach(function(e){
+            mhList.push(e.hash)    
+        })
+    }
+    
+    return mhList
+}
+
+
 // async function getDataBlockList(cid){
-//     let middle = []
-//     await ipfs.ls(h[0].path, function (err, files) {
-//         files.forEach((file) => {
-//             middle.push(file)
-//         })
-//     })
+//     var mhList = await getBlockList(cid)
+//     var lfList = []
+//     var dbList = []
+
+//     if (mhList.length != 0 ){
+//         for (var i=0; i<mhList.length; i++){
+//             var lf = await getBlockList(mhList[i])
+//             lf.forEach(function(e){
+//                 lfList.push(e)
+//             })
+//         }
+        
+//         var sNumber = Math.ceil(lfList.length / 8 )
+//         for (var i = 0; i < 8; i ++ ){
+//             if (i != 0 ){
+//                 dbList.push(lfList.slice(i*lfList - 1, (i+1)*sNumber))
+//             }else {
+//                 dbList.push(lfList.slice(i, sNumber))
+//             }
+//         }
+//         return dbList
+//     }
+    
 // }
 
-async function setMetaInfo(fname, rh, pbl){
+async function setMetaInfo(fname, rh, dbl, pbl){
     var es = await getErasureCodingSchema(fname)
     var mi = await new Meta.mi()
 
@@ -116,14 +159,15 @@ async function setMetaInfo(fname, rh, pbl){
     }
 
     mi['Roothash'] = rh
+    mi['DataBlockList'] = dbl
     mi['ParityBlockList'] = pbl
    
-    sender.sendMessages('meta', mi.toJSON())
-    // sender.sendMessages('log', 'kwanhoon!we')
+    // sender.sendMessages('meta', mi.toJSON())
+    
     return mi
 }
 
-commandAdd('add.js')
+commandAdd('7MB.txt')
 
 module.exports = {
     add : add,

@@ -20,7 +20,6 @@ const ipfsOptions = {
     }
 }
 
-// async function daemon(){
 const ipfs = new IPFS(ipfsOptions)
 
 ipfs.on('ready', async () => {
@@ -45,19 +44,16 @@ ipfs.on('ready', async () => {
     await job.load()
     await eventlog.load()
 
-    // console.log(meta.address)
     console.log(meta.address.toString())
     console.log(job.address.toString())
     console.log(eventlog.address.toString())
 
     meta.events.on('replicated', (address) => {
         console.log("Meta has been replicated")
-        // console.log(meta.iterator({ limit: -1 }).collect())
     })
 
     job.events.on('replicated', (address) => {
         console.log("Job has been replicatied")
-        // console.log(job.iterator({ limit: -1 }).collect())
     })
 
     eventlog.events.on('replicated', (address) => {
@@ -65,10 +61,6 @@ ipfs.on('ready', async () => {
         console.log(eventlog.iterator({ limit: -1 }).collect())
     })
 
-    // let mQueue = []
-    // let eQueue = []
-    // let jQueue = []
-    
     queue.on('data', async (data) =>{
         var d = JSON.parse(data.toString())
         if (d.type == 'eventlog') {
@@ -78,6 +70,7 @@ ipfs.on('ready', async () => {
             var hash = await meta.put(d.data.Roothash, d.data)
             console.log(d.data.Roothash, d.data)
         }  
-    })   
+    })
+       
 })
 
