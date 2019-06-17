@@ -1,11 +1,9 @@
 const ipfsClient = require('ipfs-http-client')
 const utils = require('../../utils/')
 const encoder = require('./encoder')
-const sender = require('./messenger')
-const pinning = require('./pin')
+// const pinning = require('./pin')
 const Meta = require('../datastore/meta')
 const fs = require('fs')
-// const cluster_test = require('../../../cluster-test')
 
 config = {
     host:"localhost",
@@ -17,7 +15,6 @@ const ipfs = ipfsClient(config.host, config.port, {protocol:config.protocol})
 
 async function add(fname, option){
     var f = fs.readFileSync(fname)
-
     let h 
     if (typeof option === 'undefined')
         h = await ipfs.add(f)
@@ -63,21 +60,14 @@ async function addOriginal(fname){
 }
 
 async function commandAdd(fname){
-    await encoder.encode(fname)
+    encoder.encode(fname)
 
     var rh = await addOriginal(fname)
     var dbl = await getDataBlockList(rh)
     var pbl = await addParityBlocks()
     let mi = await setMetaInfo(fname, rh, dbl, pbl)
-    // for (var i=0; i < dbl.length; i++){
-    //     await pinning.pin(dbl[i])
-    // }
-    // await pinning.pin(pbl)
-    // console.log(pbl)
-    // console.log(mi)
-    // console.log(es)
-    console.log(mi)
-    return rh, pbl
+    
+    return mi
 }
 
 function isParityBlock(fname){
@@ -162,12 +152,9 @@ async function setMetaInfo(fname, rh, dbl, pbl){
     mi['DataBlockList'] = dbl
     mi['ParityBlockList'] = pbl
    
-    // sender.sendMessages('meta', mi.toJSON())
-    
     return mi
 }
 
-commandAdd('7MB.txt')
 
 module.exports = {
     add : add,

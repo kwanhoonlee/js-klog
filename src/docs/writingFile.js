@@ -1,7 +1,6 @@
 const fs = require('fs'); 
 
 var fname = 'test.csv'
-// var data = '123,456,789'
 
 async function appendData(){
     var count = '1'
@@ -18,9 +17,6 @@ async function appendData(){
         console.log(err)
     }
 }
-// var a = new Date()
+
 const endTime = process.hrtime(a)[1]/(Math.pow(10, 6))
 appendData()
-// const b = window.performance.now()
-// var b = new Date()
-// console.log( process.hrtime(a), ())

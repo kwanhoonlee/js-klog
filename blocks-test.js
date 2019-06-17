@@ -1,10 +1,4 @@
 const ipfsClient = require('ipfs-http-client')
-// const utils = require('../../utils/')
-// const encoder = require('./encoder')
-// const sender = require('./messenger')
-// const pinning = require('./pin')
-// const Meta = require('../datastore/meta')
-// const fs = require('fs')
 
 config = {
     host:"localhost",
@@ -59,5 +53,3 @@ async function test(){
     console.log(a)
 }
 test()
-// console.log(a)
-// 'QmQg1kiYJ33yAfiLWmo3yaGSM6NB4xSfquAdr5ygLqTKXE'

@@ -35,7 +35,7 @@ function getAPICtl (apiAddr) {
     apiAddr = multiaddr(fs.readFileSync(apiPath).toString()).toString()
   }
   // Required inline to reduce startup time
-  const APIctl = require('ipfs-api')
+  const APIctl = require('ipfs-http-client')
   return APIctl(apiAddr)
 }
 
@@ -47,6 +47,7 @@ exports.getIPFS = (argv, callback) => {
   // Required inline to reduce startup time
   const IPFS = require('../core')
   const node = new IPFS({
+    silent: argv.silent,
     repo: exports.getRepoPath(),
     init: false,
     start: false,

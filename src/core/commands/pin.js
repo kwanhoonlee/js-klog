@@ -1,6 +1,6 @@
 var ipfsClusterAPI = require('ipfs-cluster-api')
 var ipfsCluster = ipfsClusterAPI('localhost', 9094, {protocol: 'http'})
-var sender = require('./messenger')
+var sender = require('../messenger')
 
 async function pin(cid){
     pl = []
@@ -10,7 +10,7 @@ async function pin(cid){
         } else {
             peerList.forEach(function(e){
                 pl.push(e.id)
-                if (e.id == 'QmaRixmzbuZAShb6acL2N6gvRLD4GcrSzuvYYKHRWZ4Dsi'){
+                if (e.id == 'QmSitWA48MAVmsmFtB2PcRueyQBqwS1pc8ZtmazfpkUE2s'){
                     allocations(e.id, cid)
                 }
             })
@@ -27,6 +27,7 @@ async function allocations(peerId, cid){
             "replication":1,
             "allocations":peerId
         })
+        console.log(m)
         // await sender.sendMessages('eventlog', m)
     }
 }

@@ -3,13 +3,15 @@ const OrbitDB = require('orbit-db')
 // const queue = require('svmq').open(88888)
 var MessageQueue = require('svmq')
 var queue = new MessageQueue(31337)
+var Add = require('./add')
+var Get = require('./get')
+var Pin = require('./pin')
 // const io = require('socket.io')(3999)
-
 const ipfsOptions = {
-    EXPERIMENTAL:{
-        pubsub:true
+    EXPERIMENTAL: {
+        pubsub: true
     },
-    repo:process.env['HOME'].concat('/.k-log/js-ipfs/'),
+    repo: process.env['HOME'].concat('/.k-log/js-ipfs/'),
     config: {
         Addresses: {
             Swarm: [
@@ -21,19 +23,20 @@ const ipfsOptions = {
 }
 
 const ipfs = new IPFS(ipfsOptions)
+// ipfs.setMaxListeners(15)
 
 ipfs.on('ready', async () => {
     var dir = process.env['HOME'].concat('/.k-log/datastore/orbitdb')
     const orbitdbOptions = {
-        directory:dir
-    } 
+        directory: dir
+    }
     // const orbitdb = new OrbitDB(ipfs)
     const orbitdb = await OrbitDB.createInstance(ipfs, orbitdbOptions)
     const dbOptions = {
-        accessController:{
-            write:['*']
-        }, 
-        directory:dir
+        accessController: {
+            write: ['*']
+        },
+        directory: dir
     }
 
     var meta = await orbitdb.keyvalue('meta', dbOptions)
@@ -61,16 +64,24 @@ ipfs.on('ready', async () => {
         console.log(eventlog.iterator({ limit: -1 }).collect())
     })
 
-    queue.on('data', async (data) =>{
+    queue.on('data', async (data) => {
         var d = JSON.parse(data.toString())
-        if (d.type == 'eventlog') {
-            var hash = await eventlog.add(d.data)
-            console.log(d.data)
-        }else if (d.type == 'meta'){
-            var hash = await meta.put(d.data.Roothash, d.data)
-            console.log(d.data.Roothash, d.data)
-        }  
+        if (d.type == 'add') {
+            var mi = await Add.commandAdd(d.data)
+            var h = await meta.put(mi.Roothash, mi)
+
+            console.log(mi.Roothash)
+            console.log(mi)
+            // await Pin.pin(mi.DataBlockList.concat(mi.ParityBlockList))
+
+            // console.log(v)
+        }
+        if (d.type == 'get') {
+            var mi = await meta.get(d.data)
+            // console.log("dbl", mi.DataBlockList)
+            await Get.getFileUsingDataBlock(mi.DataBlockList, mi.FileName)
+        }
     })
-       
+
 })
 
