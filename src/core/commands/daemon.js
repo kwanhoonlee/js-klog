@@ -74,12 +74,13 @@ ipfs.on('ready', async () => {
             console.log(mi)
             // await Pin.pin(mi.DataBlockList.concat(mi.ParityBlockList))
 
-            // console.log(v)
         }
         if (d.type == 'get') {
             var mi = await meta.get(d.data)
+            console.log(mi)
+            await Get.findProvidersUsingMetaInfo(mi)
             // console.log("dbl", mi.DataBlockList)
-            await Get.getFileUsingDataBlock(mi.DataBlockList, mi.FileName)
+            // await Get.getFileUsingDataBlock(mi.DataBlockList, mi.FileName)
         }
     })
 

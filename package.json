@@ -22,6 +22,7 @@
     "commander": "^2.20.0",
     "datastore-level": "^0.10.0",
     "ipfs": "^0.34.0",
+    "ipfs-api": "^26.1.2",
     "ipfs-cluster-api": "git+https://github.com/te0d/js-ipfs-cluster-api.git",
     "ipfs-http-client": "^32.0.1",
     "ipfs-repo": "^0.26.4",

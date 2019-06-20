@@ -1,38 +1,31 @@
 const ipfsClient = require('ipfs-http-client')
-// const utils = require('../../utils/')
-//const encoder = require('./encoder')
-// const pinning = require('./pin')
-// const Meta = require('../datastore/meta')
+const ipfsAPI = require('ipfs-api')
 const fs = require('fs')
-
-config = {
-    host:"127.0.0.1",
-    port:"5001",
-    protocol:"http",
-    dht:true,
-}
-
-const ipfs = ipfsClient(config.host, config.port, {protocol:config.protocol,dht:true}, )
-// var ipfs = ipfsClient({ host: '1.1.1.1', port: '80', 'api-path': '/ipfs/api/v0', dht:true})
-
-// async function get(cid) {
-//     ipfs.get(cid, function (err, files) {
-        
-//         files.forEach((file) => {
-//           console.log(file.path)
-//           console.log(file.content.toString('utf8'))
-//           fs.writeFileSync(file.path, file.content.toString('utf8'), 'utf8')
-//         })
-//     })
-// }
-
-// get('QmY54MTzDrLefCMm8FbXzaXXgRe3N1AJKj9k36VP58EEzH')
-
-
+const dht = require('./dht')
+const decoder = require('./decoder')
 var exec = require('child_process').exec,child;
 
-function makeCmd(cids, fname){
-    cmd = "ipfs cat "
+// config = {
+//     host:"127.0.0.1",
+//     port:"5001",
+//     protocol:"http",
+//     dht:true,
+// }
+
+// const ipfs = ipfsClient(config.host, config.port, {protocol:config.protocol,dht:true}, )
+
+function get(cids, fname) {
+    cmd = concatCMD(cids, fname)
+
+    child = exec(cmd, function(err, stdOut, stdErr){
+        if (err){
+            console.log(err)
+        }
+    })
+}
+
+function concatCMD(cids, fname){
+    var cmd = 'ipfs cat '
 
     cids.forEach(function(cid) {
         cmd = cmd.concat(cid, " ")
@@ -42,29 +35,65 @@ function makeCmd(cids, fname){
     return cmd
 }
 
-function getFileUsingDataBlock(cids, fname){
-    cmd = makeCmd(cids, fname)
-    
-    child = exec(cmd, function(err, stdOut, stdErr){
-        if (stdErr){
-            console.log(stdErr)
+async function findProvidersUsingMetaInfo(mi){
+    var checkList = [[mi.Roothash], mi.DataBlockList, mi.ParityBlockList]
+    const promise = checkList.map(list => dht.findProvidersUsingCIDs(list))
+
+    await Promise.all(promise).then(function(resolved){
+        var checkerResult = []
+        var indices = []
+        resolved.forEach(function(array){
+            checkerResult.push(checker(array))
+            indices.push(findIndex(array))
+        })
+        console.log(indices)
+        console.log(checkerResult)
+        if (checkerResult[0] == true){
+            decoder.createMetaFile(mi)
+            get([mi.Roothash], mi.FileName)
+        }else if (checkerResult[0] == false && checkerResult[1] == true){
+            get(mi.DataBlockList, mi.FileName)
+        }else {
+            
         }
+
     })
 }
 
-async function findProvidersUsingDHT(cid){
+function checker(array){
+    var count = 0
+    for(const i of array){
+        count = count + i
+    }
 
-    await ipfs.dht.findProvs(cid, {timeout:400000}, async function (err, res) {
-        console.log(cid)
-
-        var a = await res
-        console.log(a)
-    })
+    if (array.length == count){
+        return true
+    }else {
+        return false
+    }
 }
-findProvidersUsingDHT('QmehBA2HreFDit6QkGQnR6dzD19EhQaiGVR6TJvVej5YJs')
-// getFileUsingDataBlock(['QmXWGEY9R9on1aFNWoc5hmcLd8C4zABUkSwCDDjsudzNUc', 'QmQW7czK468NrKLwhXhF9C3CywWBztivL3b4L5MBF9V73g' ], 'test.jpg')
-// console.log()
+
+function findIndex(array){
+    var idx = array.indexOf(1)
+    var indices = []
+
+    while (idx != -1){
+        indices.push(idx)
+        idx = array.indexOf(1, idx + 1)
+    }
+
+    return indices
+}
+function getAliveBlockList(array, mi){
+    if (array.length != 0){
+        array.forEach(function(idx){
+            
+        })
+    }
+}
+// test()
+// get_test(['QmRv4bXYMS9dCxcK7dySTvWqohrhACWaas9sUsFPrVDwmf', 'Qmf9Z15w8zcBjrVXhDT4XwNVUhAdxZTMaHPQCLPUSLMWod', 'QmaGGpFd31jfoxVemjMjCzmE58yETu3HAr1qCXV5gzbDno', 'QmQZJMLWk5n28RPF9yQXe6m9TQw5FCSXuFTstv175NhiP6' ], 'new_1MB.txt')
 
 module.exports = {
-    getFileUsingDataBlock: getFileUsingDataBlock
+    findProvidersUsingMetaInfo : findProvidersUsingMetaInfo
 }
