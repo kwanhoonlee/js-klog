@@ -13,5 +13,3 @@ module.exports = {
     splitBlockName : splitBlockName,
     splitExtension : splitExtension
 }
-// console.log(splitBlockName('helloworld_meta.txt'))
-// console.log(splitExtension('helloworld_meta.mp4'))

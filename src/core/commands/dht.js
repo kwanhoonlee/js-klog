@@ -34,21 +34,6 @@ async function findProvidersUsingCIDs(cids){
     })
 }
 
-// async function dht_test(){
-//     var cids = ['QmRv4bXYMS9dCxcK7dySTvWqohrhACWaas9sUsFPrVDwmf', 'Qmf9Z15w8zcBjrVXhDT4XwNVUhAdxZTMaHPQCLPUSLMWod', 'QmaGGpFd31jfoxVemjMjCzmE58yETu3HAr1qCXV5gzbDno', 'QmQZJMLWk5n28RPF9yQXe6m9TQw5FCSXuFTstv175NhiP6' ]
-//     const promise = cids.map(item => findProviders(item))
-    
-//     await Promise.all(promise).then(function(num){
-//         var counter = 0
-//         for(const i of num){
-//             counter = counter + i
-//         }
-//         console.log(counter)
-//     })
-//     console.log('done')
-// }
-// dht_test()
-
 module.exports = {
     findProvidersUsingCIDs : findProvidersUsingCIDs
 }

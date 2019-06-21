@@ -1,9 +1,8 @@
 const test = require('./orbitdb')
-
-let m = new test.DB('keyvalue', 'meta', '', '6002', '6003')
+const utils = require('../../utils')
+// let m = new test.DB('keyvalue', 'meta', '', '6002', '6003')
 
 var metaInfo = class{  
-
     constructor(FileName, FileSize, K, M, WordSize, PacketSize, BufferSize, CodingTechnique, D1, D2, Roothash, DataBlockList, ParityBlockList,  ){
         this.FileName = FileName
         this.FileSize = FileSize
@@ -26,6 +25,46 @@ var metaInfo = class{
     }
 }
 
+// TODO: add exception for getting extension
+function getErasureCodingSchema(fname){
+    var parsed = utils.parser.splitExtension(fname)
+    parsed.pop()
+    var mfname = parsed.join('').concat(utils.files.name.mfExtension)  
+    var f = utils.files.readMetaFile(mfname)
+    f.pop()
+
+    var es = []
+    for (var i in f){
+        if (i == 2) {
+            tmp = f[i].split(' ')
+            for (var j in tmp){
+                es.push(tmp[j])
+            }
+        } else {
+            es.push(f[i])
+        }
+    }
+
+    return es
+}
+
+async function setMetaInfo(fname, rh, dbl, pbl){
+    var es = await getErasureCodingSchema(fname)
+    var mi = await new metaInfo()
+
+    for (var i in es) {
+        mi[Object.keys(mi)[i]] = es[i]
+    }
+
+    mi['Roothash'] = rh
+    mi['DataBlockList'] = dbl
+    mi['ParityBlockList'] = pbl
+   
+    return mi
+}
+
 module.exports = {
-    mi : metaInfo
+    metaInfo : metaInfo,
+    setMetaInfo : setMetaInfo,
+    getErasureCodingSchema : getErasureCodingSchema
 }

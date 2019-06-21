@@ -11,7 +11,7 @@ async function pin(cid){
             peerList.forEach(function(e){
                 pl.push(e.id)
                 if (e.id == 'QmSitWA48MAVmsmFtB2PcRueyQBqwS1pc8ZtmazfpkUE2s'){
-                    allocations(e.id, cid)
+                    allocate(e.id, cid)
                 }
             })
             // console.log(pl)
@@ -19,7 +19,7 @@ async function pin(cid){
     })
 }
 
-async function allocations(peerId, cid){
+async function allocate(peerId, cid){
     for (var i in cid){
         var m = setAllocationMessage(peerId, cid[i])
 
@@ -28,7 +28,6 @@ async function allocations(peerId, cid){
             "allocations":peerId
         })
         console.log(m)
-        // await sender.sendMessages('eventlog', m)
     }
 }
 
@@ -69,7 +68,7 @@ async function setPinnedMessage(peerId, cid){
 
 module.exports = {
     pin:pin,
-    allocations : allocations,
+    allocate : allocate,
     setPinnedMessage : setPinnedMessage
     
 }

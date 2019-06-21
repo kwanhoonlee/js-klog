@@ -2,7 +2,7 @@ const ipfsClient = require('ipfs-http-client')
 const utils = require('../../utils/')
 const encoder = require('./encoder')
 // const pinning = require('./pin')
-const Meta = require('../datastore/meta')
+const meta = require('../datastore/meta')
 const fs = require('fs')
 
 config = {
@@ -49,7 +49,7 @@ async function addParityBlocks(){
     return hashList
 }
 
-async function addOriginal(fname){
+async function addOriginalFile(fname){
     var roothash
 
     await add(fname, true).then(function(resolvedData){
@@ -59,14 +59,15 @@ async function addOriginal(fname){
     return roothash
 }
 
-async function commandAdd(fname){
-    encoder.encode(fname)
-
-    var rh = await addOriginal(fname)
+// TODO : Modify setMetaInfo method
+async function addFile(fname){
+    await encoder.encode(fname)
+    
+    var rh = await addOriginalFile(fname)
     var dbl = await getDataBlockList(rh)
     var pbl = await addParityBlocks()
-    let mi = await setMetaInfo(fname, rh, dbl, pbl)
-    
+    var mi = await meta.setMetaInfo(fname, rh, dbl, pbl)
+
     return mi
 }
 
@@ -75,29 +76,6 @@ function isParityBlock(fname){
     var isParity = pattern.test(fname)
 
     return isParity
-}
-
-// TODO: add exception for getting extension
-function getErasureCodingSchema(fname){
-    var parsed = utils.parser.splitExtension(fname)
-    parsed.pop()
-    var mfname = parsed.join('').concat(utils.files.name.mfExtension)  
-    var f = utils.files.readMetaFile(mfname)
-    f.pop()
-
-    var es = []
-    for (var i in f){
-        if (i == 2) {
-            tmp = f[i].split(' ')
-            for (var j in tmp){
-                es.push(tmp[j])
-            }
-        } else {
-            es.push(f[i])
-        }
-    }
-
-    return es
 }
 
 async function getDataBlockList(cid){
@@ -113,50 +91,6 @@ async function getDataBlockList(cid){
     return mhList
 }
 
-
-// async function getDataBlockList(cid){
-//     var mhList = await getBlockList(cid)
-//     var lfList = []
-//     var dbList = []
-
-//     if (mhList.length != 0 ){
-//         for (var i=0; i<mhList.length; i++){
-//             var lf = await getBlockList(mhList[i])
-//             lf.forEach(function(e){
-//                 lfList.push(e)
-//             })
-//         }
-        
-//         var sNumber = Math.ceil(lfList.length / 8 )
-//         for (var i = 0; i < 8; i ++ ){
-//             if (i != 0 ){
-//                 dbList.push(lfList.slice(i*lfList - 1, (i+1)*sNumber))
-//             }else {
-//                 dbList.push(lfList.slice(i, sNumber))
-//             }
-//         }
-//         return dbList
-//     }
-    
-// }
-
-async function setMetaInfo(fname, rh, dbl, pbl){
-    var es = await getErasureCodingSchema(fname)
-    var mi = await new Meta.mi()
-
-    for (var i in es) {
-        mi[Object.keys(mi)[i]] = es[i]
-    }
-
-    mi['Roothash'] = rh
-    mi['DataBlockList'] = dbl
-    mi['ParityBlockList'] = pbl
-   
-    return mi
-}
-
-
 module.exports = {
-    add : add,
-    commandAdd : commandAdd
+    addFile : addFile
 }

@@ -67,7 +67,7 @@ ipfs.on('ready', async () => {
     queue.on('data', async (data) => {
         var d = JSON.parse(data.toString())
         if (d.type == 'add') {
-            var mi = await Add.commandAdd(d.data)
+            var mi = await Add.addFile(d.data)
             var h = await meta.put(mi.Roothash, mi)
 
             console.log(mi.Roothash)
@@ -78,9 +78,7 @@ ipfs.on('ready', async () => {
         if (d.type == 'get') {
             var mi = await meta.get(d.data)
             console.log(mi)
-            await Get.findProvidersUsingMetaInfo(mi)
-            // console.log("dbl", mi.DataBlockList)
-            // await Get.getFileUsingDataBlock(mi.DataBlockList, mi.FileName)
+            await Get.getFile(mi)
         }
     })
 

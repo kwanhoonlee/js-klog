@@ -1,9 +1,10 @@
 var exec = require('child_process').exec,child;
+const meta = require('../datastore/meta')
 
 function encode(fname){
     cmd = concatFlag(fname)
 
-    child = exec(cmd, function(err, stdOut, stdErr){
+    child = exec(cmd, async function(err, stdOut, stdErr){
         if (stdErr){
             console.log(stdErr)
         }
