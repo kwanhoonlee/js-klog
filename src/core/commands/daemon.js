@@ -1,12 +1,11 @@
 const IPFS = require('ipfs')
 const OrbitDB = require('orbit-db')
-// const queue = require('svmq').open(88888)
 var MessageQueue = require('svmq')
 var queue = new MessageQueue(31337)
 var Add = require('./add')
 var Get = require('./get')
 var Pin = require('./pin')
-// const io = require('socket.io')(3999)
+
 const ipfsOptions = {
     EXPERIMENTAL: {
         pubsub: true
@@ -23,7 +22,6 @@ const ipfsOptions = {
 }
 
 const ipfs = new IPFS(ipfsOptions)
-// ipfs.setMaxListeners(15)
 
 ipfs.on('ready', async () => {
     var dir = process.env['HOME'].concat('/.k-log/datastore/orbitdb')
@@ -50,7 +48,7 @@ ipfs.on('ready', async () => {
     console.log(meta.address.toString())
     console.log(job.address.toString())
     console.log(eventlog.address.toString())
-
+    console.log(meta.get('QmWVeULwWqerbPzB9sUYYR9pxodPz2BoMxHjLM5BEyiLjX'))
     meta.events.on('replicated', (address) => {
         console.log("Meta has been replicated")
     })
@@ -73,7 +71,6 @@ ipfs.on('ready', async () => {
             console.log(mi.Roothash)
             console.log(mi)
             // await Pin.pin(mi.DataBlockList.concat(mi.ParityBlockList))
-
         }
         if (d.type == 'get') {
             var mi = await meta.get(d.data)
@@ -81,6 +78,4 @@ ipfs.on('ready', async () => {
             await Get.getFile(mi)
         }
     })
-
 })
-

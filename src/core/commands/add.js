@@ -40,13 +40,20 @@ async function addParityBlocks(){
 
     for(var i in files){
         if (isParityBlock(files[i])){
-            await add(codingPath.concat(files[i])).then(function(resolvedData){
-                hashList.push(resolvedData)
+            await add(codingPath.concat(files[i])).then(function(resolved){
+                hashList.push(resolved)
             })        
         }
     }
 
     return hashList
+}
+
+function isParityBlock(fname){
+    var pattern = /_m[0-9]./
+    var isParity = pattern.test(fname)
+
+    return isParity
 }
 
 async function addOriginalFile(fname){
@@ -59,23 +66,15 @@ async function addOriginalFile(fname){
     return roothash
 }
 
-// TODO : Modify setMetaInfo method
+// TODO : if fsize < 1MB, replicate a file
 async function addFile(fname){
-    await encoder.encode(fname)
-    
+    var es = await encoder.encode(fname)   
     var rh = await addOriginalFile(fname)
-    var dbl = await getDataBlockList(rh)
+    var dbl = await getDataBlockList(rh)    
     var pbl = await addParityBlocks()
-    var mi = await meta.setMetaInfo(fname, rh, dbl, pbl)
+    var mi = await meta.setMetaInfo(es, rh, dbl, pbl)
 
     return mi
-}
-
-function isParityBlock(fname){
-    var pattern = /_m[0-9]./
-    var isParity = pattern.test(fname)
-
-    return isParity
 }
 
 async function getDataBlockList(cid){

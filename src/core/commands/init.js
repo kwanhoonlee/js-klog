@@ -1,11 +1,11 @@
-var exec = require('child_process').exec,child;
+var exec = require('child_process').exec;
 var spawn = require('child_process').spawn,
     cluster = spawn('ipfs-cluster-service', ['init', '-s'])
 
 function mkdir(){
     cmd = 'sh ../../bin/create.sh'
 
-    child = exec(cmd, function(err, stdOut, stdErr){
+    exec(cmd, function(err, stdOut, stdErr){
         if (stdErr){
             console.log(stdErr)
         }

@@ -1,6 +1,6 @@
 var spawn = require('child_process').spawn;
 
-function findProviders(cid){
+function find(cid){
     var cmd = spawn('ipfs', ['dht', 'findprovs', cid])
     var count = 0
 
@@ -13,14 +13,13 @@ function findProviders(cid){
     return new Promise (resolve => {
         setTimeout(function(){
             cmd.kill()
-            // console.log(cid)
             resolve(count)
-        }, 2000)      
+        }, 3000)      
     })
 }
 
-async function findProvidersUsingCIDs(cids){
-    const promise = cids.map(cid => findProviders(cid))
+async function findProviders(cids){
+    const promise = cids.map(cid => find(cid))
     var aliveCIDList = []
 
     await Promise.all(promise).then(function(num){      
@@ -35,5 +34,5 @@ async function findProvidersUsingCIDs(cids){
 }
 
 module.exports = {
-    findProvidersUsingCIDs : findProvidersUsingCIDs
+    findProviders : findProviders
 }

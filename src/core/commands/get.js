@@ -27,7 +27,7 @@ function concatCMD(cids, fname){
 
 async function getFile(mi){
     var checkList = [[mi.Roothash], mi.DataBlockList, mi.ParityBlockList]
-    const promise = checkList.map(list => dht.findProvidersUsingCIDs(list))
+    const promise = checkList.map(list => dht.findProviders(list))
 
     await Promise.all(promise).then(function(resolved){
         var checkerResult = []
@@ -40,33 +40,36 @@ async function getFile(mi){
         var numBlocks = indices[1].length + indices[2].length
         console.log(checkerResult, indices, 'current the number of blocks', numBlocks)
 
+        //TODO : add try-catch
         if (checkerResult[0] == true){
             get([mi.Roothash], mi.FileName)
         }else if (checkerResult[0] == false && checkerResult[1] == true){
             get(mi.DataBlockList, mi.FileName)
         }else {
-            var aliveBlockList = {
-                'dataBlock' : getAliveBlockList(indices[1], mi, 'data'),
-                'parityBlock' : getAliveBlockList(indices[2], mi, 'parity')
-            }
-            
-            var codingDir = './Coding/'
-            if (fs.existsSync(codingDir) == false){
-                fs.mkdirSync(codingDir)
-            }
-            decoder.createMetaFile(mi)
-            
-            for (var key in aliveBlockList){
-                if (aliveBlockList[key].Block != undefined){
-                    for (var i = 0; i<aliveBlockList[key].Block.length; i++){
-                        get([aliveBlockList[key].Block[i]], codingDir.concat(aliveBlockList[key].Name[i]))
-                    }
-                }
-            }
-            // TODO: try , catch
-            decoder.decode(mi.FileName)
+            getFileUsingDecoding(indices, mi)
         }
     })
+}
+function getFileUsingDecoding(indices, mi){
+    var aliveBlockList = {
+        'dataBlock' : getAliveBlockList(indices[1], mi, 'data'),
+        'parityBlock' : getAliveBlockList(indices[2], mi, 'parity')
+    }
+    
+    var codingDir = './Coding/'
+    if (fs.existsSync(codingDir) == false){
+        fs.mkdirSync(codingDir)
+    }
+    decoder.createMetaFile(mi)
+    
+    for (var key in aliveBlockList){
+        if (aliveBlockList[key].Block != undefined){
+            for (var i = 0; i<aliveBlockList[key].Block.length; i++){
+                get([aliveBlockList[key].Block[i]], codingDir.concat(aliveBlockList[key].Name[i]))
+            }
+        }
+    }
+    decoder.decode(mi.FileName)
 }
 
 function checker(array){

@@ -7,7 +7,7 @@ import (
 )
 const (
 	kb = 1024
-	mb = 1024 * 1024
+	mb = 1024 * kb
 	halfMB = mb / 2
 	gb = mb * 1000
 )
@@ -48,6 +48,8 @@ func NewKlogChunker(fsize int) klogChunker {
 	}else if fsize > 8 * mb && fsize <= 1392 * mb {
 		middle = getMiddleSize(fsize)
 		leaf, leafRemainder = getLeafSize(middle)
+	}else if fsize < 1 * mb{
+		leaf = fsize
 	}
 	
 	return klogChunker{
