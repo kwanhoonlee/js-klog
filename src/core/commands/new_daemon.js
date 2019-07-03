@@ -21,7 +21,7 @@ async function daemon(){
     await eventlog.load()
 
     console.log(meta.address.toString().concat('\n', job.address.toString(), '\n',  eventlog.address.toString()))
-
+    
     meta.events.on('replicated', (address) => {
         console.log("Meta has been updated")
     })
@@ -32,8 +32,7 @@ async function daemon(){
 
     eventlog.events.on('replicated', (address) => {
         const event = eventlog.iterator({ limit: 1 }).collect().map(e => e.payload.value)
-        console.log("Log has been updated")
-        console.log(event)
+        console.log(event[0])
     })
 
     queue.on('data', async (data) => {
@@ -41,10 +40,14 @@ async function daemon(){
         if (d.type == 'add') {
             var mi = await Add.addFile(d.data)
             var h = await meta.put(mi.Roothash, mi)
-
             console.log(mi.Roothash)
             console.log(mi)
-            // await Pin.pin(mi.DataBlockList.concat(mi.ParityBlockList))
+
+            var m = await Pin.pin(mi.Roothash, mi.DataBlockList.concat(mi.ParityBlockList))
+            for (var i = 0; i < m.length; i ++){
+                console.log(m[i])
+                await eventlog.add(m[i])
+            }
         }
         if (d.type == 'get') {
             var mi = await meta.get(d.data)

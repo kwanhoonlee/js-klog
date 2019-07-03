@@ -27,8 +27,8 @@ async function add(fname, option){
         if (typeof cid != undefined){
             resolve(cid)
         }else {
-            console.log("Invalid CID")
-            reject(cid)
+            console.log("Invalid file name")
+            reject(false)
         }
     })
 }

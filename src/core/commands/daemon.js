@@ -28,7 +28,7 @@ ipfs.on('ready', async () => {
     const orbitdbOptions = {
         directory: dir
     }
-    // const orbitdb = new OrbitDB(ipfs)
+    
     const orbitdb = await OrbitDB.createInstance(ipfs, orbitdbOptions)
     const dbOptions = {
         accessController: {

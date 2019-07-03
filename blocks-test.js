@@ -21,7 +21,6 @@ async function getBlockList(cid){
     return mhList
 }
 
-
 async function getDataBlockList(cid){
     var mhList = await getBlockList(cid)
     var lfList = []
@@ -52,4 +51,5 @@ async function test(){
     a = await getDataBlockList("QmT4xRTR7LCXHeJJ87npTeRmiwy5ifZpWinW13Gtab2aZ9")
     console.log(a)
 }
+
 test()

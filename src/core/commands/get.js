@@ -2,7 +2,7 @@ const fs = require('fs')
 const dht = require('./dht')
 const decoder = require('./decoder')
 const parser = require('../../utils/parser')
-var exec = require('child_process').exec,child;
+var exec = require('child_process').exec;
 
 function get(cids, fname) {
     cmd = concatCMD(cids, fname)
@@ -50,6 +50,7 @@ async function getFile(mi){
         }
     })
 }
+
 function getFileUsingDecoding(indices, mi){
     var aliveBlockList = {
         'dataBlock' : getAliveBlockList(indices[1], mi, 'data'),
@@ -120,7 +121,6 @@ function getAliveBlockList(indices, mi, blockType ){
 
     return dict
 }
-
 
 module.exports = {
     getFile : getFile

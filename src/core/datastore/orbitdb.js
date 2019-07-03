@@ -7,10 +7,8 @@ async function newDB(){
         port:"5001",
         protocol:"http",
     }
-
     const ipfs = ipfsClient(config.host, config.port, {protocol:config.protocol})
-
-    var dir = process.env['HOME'].concat('/.k-log/datastore/orbitdb')
+    const dir = process.env['HOME'].concat('/.k-log/datastore/orbitdb')
     const orbitdbOptions = {
         directory: dir
     }
