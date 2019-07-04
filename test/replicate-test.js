@@ -30,21 +30,5 @@ ipfs.on('ready', async() => {
     const result = db.iterator({ limit: -1 }).collect()
     console.log(JSON.stringify(result, null, 2))
     const hash2 = await db.add('helloworld!2')
-
-    // const value = await db.get('hello')
-    // console.log(value)
-    // const hash = db.get('zdpuAvWVNGwbkmk3C77mSrFPSWw4b23roFnzmXPk6WH3zS7FJ')
-    // console.log(hash)
-    // const db = await orbitdb.open('/orbitdb/zdpuAwcRbFyvTFZzCurABByCXodUjBtYDgDeF5vaGPeeTsQM5/test')
-    // a = await db.get('zdpuAx7CGyNKZdhdgbvE9esghzJS4ZafGFPA4zwTsArDE8DRq')
-
-    // console.log(a)
 })
 var queue = [];
-
-// ipfs.on('ready', async() => {
-// })
-
-// async function createDB(){
-
-// }

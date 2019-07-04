@@ -28,7 +28,6 @@ function concatFlag(fname){
     }
 
     cmd = encoder.concat(" ", fname)
-
     for (var key in options){
         cmd = cmd.concat(" ", options[key])
     }

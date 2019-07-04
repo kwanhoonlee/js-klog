@@ -20,16 +20,16 @@ function find(cid){
 
 async function findProviders(cids){
     const promise = cids.map(cid => find(cid))
-    var aliveCIDList = []
+    var cidList = []
 
-    await Promise.all(promise).then(function(num){      
-        for(const i of num){
-            aliveCIDList.push(i)
+    await Promise.all(promise).then(function(countList){      
+        for(const count of countList){
+            cidList.push(count)
         }       
     })
 
     return new Promise(function (resolve){
-        resolve(aliveCIDList)
+        resolve(cidList)
     })
 }
 

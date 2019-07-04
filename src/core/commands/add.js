@@ -1,7 +1,6 @@
 const ipfsClient = require('ipfs-http-client')
 const utils = require('../../utils/')
 const encoder = require('./encoder')
-// const pinning = require('./pin')
 const meta = require('../datastore/meta')
 const fs = require('fs')
 
@@ -27,7 +26,7 @@ async function add(fname, option){
         if (typeof cid != undefined){
             resolve(cid)
         }else {
-            console.log("Invalid file name")
+            console.log("Error: no such file")
             reject(false)
         }
     })
