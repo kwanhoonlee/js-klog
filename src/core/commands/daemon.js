@@ -31,8 +31,9 @@ async function daemon(){
     })
 
     eventlog.events.on('replicated', (address) => {
-        const event = eventlog.iterator({ limit: 1 }).collect().map(e => e.payload.value)
-        console.log(event[0])
+        console.log("Evenltlog has been updated")
+        // const event = eventlog.iterator({ limit: 1 }).collect().map(e => e.payload.value)
+        // console.log(event[0])
     })
 
     queue.on('data', async (data) => {
@@ -43,10 +44,10 @@ async function daemon(){
             console.log(mi.Roothash)
             console.log(mi)
 
-            var m = await Pin.pin(mi.Roothash, mi.DataBlockList.concat(mi.ParityBlockList))
-            for (var i = 0; i < m.length; i ++){
-                console.log(m[i])
-                await eventlog.add(m[i])
+            var pm = await Pin.pin(mi.Roothash, mi.DataBlockList.concat(mi.ParityBlockList))
+            for (var i = 0; i < pm.length; i ++){
+                console.log(pm[i])
+                await eventlog.add(pm[i])
             }
         }
         if (d.type == 'get') {

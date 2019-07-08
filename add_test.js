@@ -1,4 +1,4 @@
-const sender = require('./messenger')
+const sender = require('./src/core/messenger')
 
 // sender.sendMessages('add', '/Users/leekwanhoon/Downloads/ipfs-chunk-test/512MB.zip')
 //sender.sendMessages('add', 'lib.deb')

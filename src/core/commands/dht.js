@@ -14,7 +14,7 @@ function find(cid){
         setTimeout(function(){
             cmd.kill()
             resolve(count)
-        }, 3000)      
+        }, 10000)      
     })
 }
 

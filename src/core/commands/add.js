@@ -56,13 +56,13 @@ function isParityBlock(fname){
 }
 
 async function addOriginalFile(fname){
-    var roothash
+    var rh
 
     await add(fname, true).then(function(resolvedData){
-        roothash = resolvedData
+        rh = resolvedData
     })
 
-    return roothash
+    return rh
 }
 
 // TODO : if fsize < 1MB, replicate a file
@@ -77,16 +77,16 @@ async function addFile(fname){
 }
 
 async function getDataBlockList(cid){
-    var mh = await ipfs.ls(cid)
-    var mhList = []
+    var mhl = await ipfs.ls(cid)
+    var dbl = []
 
-    if (mh.length != 0){    
-        mh.forEach(function(e){
-            mhList.push(e.hash)    
+    if (mhl.length != 0){    
+        mhl.forEach(function(mh){
+            dbl.push(mh.hash)    
         })
     }
     
-    return mhList
+    return dbl
 }
 
 module.exports = {

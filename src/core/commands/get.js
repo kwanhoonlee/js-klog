@@ -5,16 +5,16 @@ const parser = require('../../utils/parser')
 var exec = require('child_process').exec;
 
 function get(cids, fname) {
-    cmd = concatCMD(cids, fname)
+    cmd = concatFlag(cids, fname)
 
-    child = exec(cmd, function(err, stdOut, stdErr){
+    exec(cmd, function(err, stdOut, stdErr){
         if (err){
             console.log(err)
         }
     })
 }
 
-function concatCMD(cids, fname){
+function concatFlag(cids, fname){
     var cmd = 'ipfs cat '
 
     cids.forEach(function(cid) {
@@ -38,7 +38,7 @@ async function getFile(mi){
             indices.push(findIndices(array))
         })
         var numBlocks = indices[1].length + indices[2].length
-        console.log(checkerResult, indices, 'current the number of blocks', numBlocks)
+        console.log(checkerResult, indices, 'the number of blocks', numBlocks)
 
         //TODO : add try-catch
         if (checkerResult[0] == true){
@@ -70,6 +70,7 @@ function getFileUsingDecoding(indices, mi){
             }
         }
     }
+    
     decoder.decode(mi.FileName)
 }
 
