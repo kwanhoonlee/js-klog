@@ -1,9 +1,15 @@
+
+
 function setAllocationMessage(rh, peerId, cid){
     var prefix = '/pin/'
     var pm = prefix.concat(rh, "/", peerId, "/", cid)
 
     return pm
 }
+
+// async function setPinnedMessage(cid){
+//     pinls = await 
+// }
 
 // TODO: change this part 
 // async function setPinnedMessage(peerId, cid){

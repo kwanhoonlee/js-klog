@@ -35,7 +35,8 @@ async function allocate(rh, peerId, cid){
 
     await ipfsCluster.pin.add(cid, {
         "user-allocations": [peerId,],
-        "replication": 1
+        "replication": 1,
+        "name": rh
     })
 
     return pm

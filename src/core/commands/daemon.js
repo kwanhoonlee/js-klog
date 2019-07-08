@@ -1,6 +1,7 @@
 const OrbitDB = require('../datastore/orbitdb')
 var MessageQueue = require('svmq')
 var queue = new MessageQueue(31337)
+var Cluster = require('./cluster')
 var Add = require('./add')
 var Get = require('./get')
 var Pin = require('./pin')
@@ -35,6 +36,7 @@ async function daemon(){
         // const event = eventlog.iterator({ limit: 1 }).collect().map(e => e.payload.value)
         // console.log(event[0])
     })
+    Cluster.daemon(eventlog)
 
     queue.on('data', async (data) => {
         var d = JSON.parse(data.toString())
@@ -57,4 +59,7 @@ async function daemon(){
         }
     })
 }
+
+
 daemon()
+// cluster_daemon()
