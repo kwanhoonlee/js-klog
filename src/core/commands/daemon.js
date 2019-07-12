@@ -36,7 +36,7 @@ async function daemon(){
         // const event = eventlog.iterator({ limit: 1 }).collect().map(e => e.payload.value)
         // console.log(event[0])
     })
-    Cluster.daemon(eventlog)
+    // Cluster.daemon(eventlog)
 
     queue.on('data', async (data) => {
         var d = JSON.parse(data.toString())

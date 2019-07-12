@@ -35,11 +35,8 @@ function concatFlag(fname){
     return cmd;
 }
 
-// TODO: add exception for getting extension
 function getErasureCodingSchema(fname){
-    var parsed = utils.parser.splitExtension(fname)
-    parsed.pop()
-    var mfname = parsed.join('').concat(utils.files.name.mfExtension)  
+    var mfname = utils.parser.getMetaFilename(fname)
     var f = utils.files.readMetaFile(mfname)
     f.pop()
 

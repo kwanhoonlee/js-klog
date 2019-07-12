@@ -33,7 +33,7 @@ async function add(fname, option){
 }
 
 async function addParityBlocks(){
-    var files = await utils.files.getBlockList()
+    var files = await utils.files.getCodingBlockList()
     var codingPath = utils.path.coding
     var hashList = []
 
@@ -65,13 +65,14 @@ async function addOriginalFile(fname){
     return rh
 }
 
-// TODO : if fsize < 1MB, replicate a file
+// TODO : if fsize < 1MB, replicates a file
 async function addFile(fname){
     var es = await encoder.encode(fname)   
     var rh = await addOriginalFile(fname)
     var dbl = await getDataBlockList(rh)    
     var pbl = await addParityBlocks()
     var mi = await meta.setMetaInfo(es, rh, dbl, pbl)
+    utils.files.deleteFolderRecursive('Coding')
 
     return mi
 }
